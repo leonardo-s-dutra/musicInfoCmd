@@ -1,4 +1,4 @@
-from musicInfo import App
+from app import App
 
 init_message = '''
 \t***************************
