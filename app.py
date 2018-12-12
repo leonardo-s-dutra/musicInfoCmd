@@ -4,7 +4,7 @@ import spotipy
 import spotipy.util
 import lyricsgenius
 
-from utils import *
+import utils
 
 class App(Cmd):
 
@@ -43,26 +43,26 @@ Parameters:
 		REDIRECT_URI (for Spotify)
 		TOKEN (for Lyrics Genius)
 		'''
-		arg = arg.strip().split()																#split arg string by spaces
-		if check_arguments_number(arg, min = 3, max = 3) == -1:									#check number of arguments
-			return																				#return if not correct
+		arg = arg.strip().split()																	#split arg string by spaces
+		if check_arguments_number(arg, min = 3, max = 3) == -1:										#check number of arguments
+			return																					#return if not correct
 
-		if arg[0] == 'SPOTIFY':																	#if first argument is 'SPOTIFY'
-			if arg[1] in list(self.spotify.keys()):												#if second argument is in spotify keys
-				self.spotify[arg[1]] = arg[2]													#set spotify attribute
+		if arg[0] == 'SPOTIFY':																		#if first argument is 'SPOTIFY'
+			if arg[1] in list(self.spotify.keys()):													#if second argument is in spotify keys
+				self.spotify[arg[1]] = arg[2]														#set spotify attribute
 				print('Spotify', arg[1].capitalize().replace('_', ' '), '=', "'"+self.spotify[arg[1]]+"'", end = '\n\n')
 			else:
-				print('Invalid argument:', arg[1], end = '\n\n')								#else log error and return
+				print('Invalid argument:', arg[1], end = '\n\n')									#else log error and return
 
-		elif arg[0] == 'LYRICS_GENIUS':															#else if first argument is 'LYRICS_GENIUS'
-			if arg[1] == 'TOKEN':																#if seconf argument is 'Token'
-				self.lyrics_genius['TOKEN'] = arg[2]											#set lyrics_genius attribute
+		elif arg[0] == 'LYRICS_GENIUS':																#else if first argument is 'LYRICS_GENIUS'
+			if arg[1] == 'TOKEN':																	#if seconf argument is 'Token'
+				self.lyrics_genius['TOKEN'] = arg[2]												#set lyrics_genius attribute
 				print('Lyrics Genius Token =', "'"+self.lyrics_genius['TOKEN']+"'", end = '\n\n')
 			else:
-				print('Invalid argument:', arg[1], end = '\n\n')								#else log error and return
+				print('Invalid argument:', arg[1], end = '\n\n')									#else log error and return
 
 		else:
-			print('Invalid argument:', arg[0], end = '\n\n')									#if first argumernt is invalid, log error and return
+			print('Invalid argument:', arg[0], end = '\n\n')										#if invalid first argumernt, log error and return
 
 
 	def do_INIT_SESSION(self, arg):
@@ -92,24 +92,24 @@ Parameters:
 	FILE:
 		A .txt file path
 		'''
-		arg = arg.strip().split()																#split arg string by spaces
-		if check_arguments_number(arg, min = 1, max = 2) == -1:									#check number of arguments
-			return																				#return if not correct
+		arg = arg.strip().split()																	#split arg string by spaces
+		if check_arguments_number(arg, min = 1, max = 2) == -1:										#check number of arguments
+			return																					#return if not correct
 
-		if arg[0] == 'SPOTIFY':																	#if first argument is 'SPOTIFY'
+		if arg[0] == 'SPOTIFY':																		#if first argument is 'SPOTIFY'
 
-			if len(arg) == 2:																	#if provided two arguments:
-				result = txt_to_list(arg[1], 4)													#get file data
+			if len(arg) == 2:																		#if provided two arguments:
+				result = txt_to_list(arg[1], 4)														#get file data
 				if result == -1:
-					return 																		#if failed, log error and return
-				self.spotify = dict(zip(self.spotify.keys(), result))							#else, set spotify attribute
+					return 																			#if failed, log error and return
+				self.spotify = dict(zip(self.spotify.keys(), result))								#else, set spotify attribute
 
-			for i in self.spotify.items():														#check if there are empty attributes
+			for i in self.spotify.items():															#check if there are empty attributes
 				if i[1] == '':
 					print('Spotify', i[0], 'not specified', end = '\n\n')
-					return 																		#in the case, log error and return
+					return 																			#in the case, log error and return
 
-			try:																				#try to get spotify token
+			try:																					#try to get spotify token
 				token = spotipy.util.prompt_for_user_token(self.spotify['USERNAME'],
 												   		   scope = None,
 												   		   client_id = self.spotify['CLIENT_ID'],
@@ -123,30 +123,31 @@ Parameters:
 													   		   client_id = self.spotify['CLIENT_ID'],
 													   		   client_secret = self.spotify['CLIENT_SECRET'],
 													   		   redirect_uri = self.spotify['REDIRECT_URI'])
-				except:																			#if failed, log error and return
-					print("Couldn't initiate Spotify application. Please, try again", end = '\n\n')
+				except:
+					print("Couldn't initiate Spotify application. Please, try again", end = '\n\n')	#if failed, log error and return
 
-			self.spotify_api = spotipy.Spotify(auth = token)									#define spotify API object
+			self.spotify_api = spotipy.Spotify(auth = token)										#define spotify API object
 			print('Running Spotify session', end = '\n\n')
 
-		elif arg[0] == 'LYRICS_GENIUS':															#if first argument is 'LYRICS_GENIUS'
+		elif arg[0] == 'LYRICS_GENIUS':																#if first argument is 'LYRICS_GENIUS'
 
-			if len(arg) == 2:																	#if provided two arguments:
-				result = txt_to_list(arg[1], 1)													#get file data
+			if len(arg) == 2:																		#if provided two arguments:
+				result = txt_to_list(arg[1], 1)														#get file data
 				if result == -1:
-					return 																		#if failed, log error and return
-				self.lyrics_genius = dict(zip(self.lyrics_genius.keys(), result))				#else, set lyrics genius attributes
+					return 																			#if failed, log error and return
+				self.lyrics_genius = dict(zip(self.lyrics_genius.keys(), result))					#else, set lyrics genius attributes
 
-			for i in self.lyrics_genius.items():												#check if there are empty attributes
+			for i in self.lyrics_genius.items():													#check if there are empty attributes
 				if i[1] == '':
 					print('Lyrics Genius', i[0], 'not specified', end = '\n\n')
-					return 																		#in the case, log error and return
+					return 																			#in the case, log error and return
 
-			self.lyrics_genius_api = lyricsgenius.Genius(self.lyrics_genius['TOKEN'])			#define lyrics Genius API object
+			self.lyrics_genius_api = lyricsgenius.Genius(self.lyrics_genius['TOKEN'])				#define lyrics Genius API object
 			print('Running Lyrics Genius session', end = '\n\n')
 
 		else:
-			print('Invalid argument:', arg[0], end = '\n\n')									#if first argumernt is invalid, log error and return
+			print('Invalid argument:', arg[0], end = '\n\n')										#if invalid first argumernt, log error and return
+
 
 	def do_CLOSE_SESSION(self, arg):
 		'''
@@ -160,26 +161,27 @@ Parameters:
 		SPOTIFY
 		LYRICS_GENIUS
 		'''
-		arg = arg.strip().split()																#split arg string by spaces
-		if check_arguments_number(arg, min = 1, max = 1) == -1:									#check number of arguments
-			return																				#return if not correct
+		arg = arg.strip().split()																	#split arg string by spaces
+		if check_arguments_number(arg, min = 1, max = 1) == -1:										#check number of arguments
+			return																					#return if not correct
 
-		if arg[0] == 'SPOTIFY':																	#if first argument is 'SPOTIFY'
-			if self.spotify_api == None:														#if spotify API object not defined
-				print('No Spotify session currently running', end = '\n\n')						#log error and return
+		if arg[0] == 'SPOTIFY':																		#if first argument is 'SPOTIFY'
+			if self.spotify_api == None:															#if spotify API object not defined
+				print('No Spotify session currently running', end = '\n\n')							#log error and return
 			else:
-				self.spotify_api = None															#else set spotify API object to none
+				self.spotify_api = None																#else set spotify API object to none
 				print('Stopped Spotify session', end = '\n\n')
 
-		elif arg[0] == 'LYRICS_GENIUS':															#if first argument is 'LYRICS_GENIUS'
-			if self.lyrics_genius_api == None:													#if lyrics genius API object is none
-				print('No Lyrics Genius session currently running', end = '\n\n')				#log error and return
+		elif arg[0] == 'LYRICS_GENIUS':																#if first argument is 'LYRICS_GENIUS'
+			if self.lyrics_genius_api == None:														#if lyrics genius API object is none
+				print('No Lyrics Genius session currently running', end = '\n\n')					#log error and return
 			else:
-				self.lyrics_genius_api = None 													#else set lyrics genius API object to none
+				self.lyrics_genius_api = None 														#else set lyrics genius API object to none
 				print('Stopped Lyrics Genius session', end = '\n\n')
 
 		else:
-			print('Invalid argument:', arg[0], end = '\n\n')									#if first argumernt is invalid, log error and return
+			print('Invalid argument:', arg[0], end = '\n\n')										#if invalid first argumernt, log error and return
+
 
 	def do_SPOTIFY(self, arg):
 		'''
@@ -195,14 +197,15 @@ Parameters:
 		CLIENT_SECRET
 		REDIRECT_URI
 		'''
-		arg = arg.strip().split()																#split arg string by spaces
-		if check_arguments_number(arg, min = 1, max = 2) == -1:									#check number of arguments
-			return																				#return if not correct
+		arg = arg.strip().split()																	#split arg string by spaces
+		if check_arguments_number(arg, min = 1, max = 2) == -1:										#check number of arguments
+			return																					#return if not correct
 
-		if arg[0] in list(self.spotify.keys()):													#if second argument is in spotify keys
+		if arg[0] in list(self.spotify.keys()):														#if second argument is in spotify keys
 			print('Spotify', arg[0].capitalize().replace('_', ' '), '=', "'"+self.spotify[arg[0]]+"'", end = '\n\n')	#shows attribute
 		else:
-			print('Invalid argument:', arg[1], end = '\n\n')									#if first argumernt is invalid, log error and return
+			print('Invalid argument:', arg[1], end = '\n\n')										#if invalid first argumernt, log error and return
+
 
 	def do_LYRICS_GENIUS(self, arg):
 		'''
@@ -215,44 +218,57 @@ Parameters:
 	VAR:
 		TOKEN
 		'''
-		arg = arg.strip().split()																#split arg string by spaces
-		if check_arguments_number(arg, min = 1, max = 2) == -1:									#check number of arguments
-			return																				#return if not correct
+		arg = arg.strip().split()																	#split arg string by spaces
+		if check_arguments_number(arg, min = 1, max = 2) == -1:										#check number of arguments
+			return																					#return if not correct
 
-		if arg[0] in list(self.lyrics_genius.keys()):											#if second argument is in lyrics genius keys
+		if arg[0] in list(self.lyrics_genius.keys()):												#if second argument is in lyrics genius keys
 			print('Lyrics Genius', arg[0].capitalize().replace('_', ' '), '=', "'"+self.lyrics_genius[arg[0]]+"'", end = '\n\n')	#shows attribute
 		else:
-			print('Invalid argument:', arg[1], end = '\n\n')									#if first argumernt is invalid, log error and return
+			print('Invalid argument:', arg[1], end = '\n\n')										#if invalid first argumernt, log error and return
+
 
 	def do_GET(self, arg):
 
-		arg = arg.strip().split()																#split arg string by spaces
-		if check_arguments_number(arg, min = 2) == -1:											#check number of arguments
-			return																				#return if not correct
+		arg = arg.strip().split()																	#split arg string by spaces
+		if check_arguments_number(arg, min = 2) == -1:												#check number of arguments
+			return																					#return if not correct
 
-		if arg[0] == 'ARTIST_ALBUMS':															#if first argument is 'ARTIST_ALBUMS'
+		if arg[0] == 'ARTIST_ALBUMS':																#if first argument is 'ARTIST_ALBUMS'
 
-			if self.spotify_api == None:														#if spotify API not running
-				print('Spotify API session not running', end = '\n\n')
-				return 																			#log error and return
+			if self.spotify_api == None:															#if spotify API not running
+				print('Spotify API session not running', end = '\n\n')								#log error and return
+				return
 
-			artist = ' '.join(arg[1:])															#join last arguments in case of not sigle word artist
-			albums = get_artist_albums(artist, self.spotify_api)								#get albums
+			artist = ' '.join(arg[1:])																#join last arguments in case of not sigle word artist
+			albums = get_artist_albums(artist, self.spotify_api)									#get albums
 
-			if albums == -1:																	#if failed
-				print('Artist not found', end = '\n\n')
-				return																			#log error and return
-
-			max_len = max(len(i) for i in albums)												#get longest name size
+			if albums == -1:																		#if failed
+				print('Artist not found', end = '\n\n')												#log error and return
+				return
 
 			print('\n' + artist.capitalize() + ' albums:', end = '\n\n')
-			print('\t' + max_len * '*' + '**')
-			for album in albums:
-				print('\t|' + album + (max_len - len(album)) * ' ' + '|')
-			print('\t' + max_len * '*' + '**', end = '\n\n')									#print a table with all albums listed
+			print_table(albums)
+
+		elif arg[0] == 'ARTIST_TOP_TRACKS':
+			
+			if self.spotify_api == None:															#if spotify API not running
+				print('Spotify API session not running', end = '\n\n')								#log error and return
+				return
+
+			artist = ' '.join(arg[1:])																#join last arguments in case of not sigle word artist
+			top_tracks = get_artist_top_tracks(artist, self.spotify_api)							#get albums
+
+			if top_tracks == -1:																	#if failed
+				print('Artist not found', end = '\n\n')												#log error and return
+				return
+
+			print('\n' + artist.capitalize() + ' top tracks:', end = '\n\n')
+			print_table(top_tracks)
 
 		else:
-			print('Invalid argument:', arg[1], end = '\n\n')									#if first argumernt is invalid, log error and return
+			print('Invalid argument:', arg[1], end = '\n\n')										#if invalid first argumernt, log error and return
+
 
 	def emptyline(self):
-		pass 																					#if no command was passed, do nothing
+		pass 																						#if no command was passed, do nothing
