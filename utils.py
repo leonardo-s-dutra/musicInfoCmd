@@ -1,5 +1,5 @@
 import os
-
+import re
 
 def txt_to_list(file, number_of_lines):
 
@@ -27,7 +27,7 @@ def txt_to_list(file, number_of_lines):
 		return -1
 
 
-def check_arguments_number(arg, min, max):
+def check_arguments_number(arg, min = 0, max = float('inf')):
 
 	if len(arg) < min:
 		print('Missing arguments!', end = '\n\n')
@@ -43,40 +43,47 @@ def check_arguments_number(arg, min, max):
 
 def get_artist_id(artist_name, spotipyObject):
 
-	search = spotipyObject.search(q = 'artist:' + artist_name, type = 'artist')['artists']['items']
-	
-	if len(search) > 0:
-		return search[0]
-	else:
+	try:
+		search = spotipyObject.search(q = 'artist:' + artist_name, type = 'artist')['artists']['items'][0]
+
+	except IndexError:
 		return -1
+
+	return search['id']
 
 
 def get_album_id(album_name, spotipyObject):
 
-	search = spotipyObject.search(q = 'album:' + album_name, type = 'album')['albums']['items']
+	try:
+		search = spotipyObject.search(q = 'album:' + album_name, type = 'album')['albums']['items']
 	
-	if len(search) > 0:
-		return search[0]
-	else:
-		return None
+	except IndexError:
+		return -1
+
+	return search[0]
 
 
-def get_albums(artist, spotipyObject):
+def get_artist_albums(artist, spotipyObject):
 
-	search = spotipyObject.artist_albums(artist['id'], album_type = 'album')
+	artist_id = get_artist_id(artist, spotipyObject)
 
-	albums = []
-	albums.extend(search['items'])
-	while search['next']:
-		search = spotipyObject.next(search)
+	try:
+		search = spotipyObject.artist_albums(artist_id, album_type = 'album')
+
+		albums = []
 		albums.extend(search['items'])
+		while search['next']:
+			search = spotipyObject.next(search)
+			albums.extend(search['items'])
 
-	added = set()
-	for album in albums:
-		name = re.sub("[(].*?[)]", '', album['name'].split(':')[0].split(' - ')[0]).strip()
-		added.add(name)
+		added = set()
+		for album in albums:
+			added.add(re.sub("[(].*?[)]", '', album['name'].split(':')[0].split(' - ')[0]).strip())
 
-	return added
+		return added
+
+	except AttributeError:
+		return -1
 
 
 def get_artist_top_tracks(artist, country = None):
@@ -85,8 +92,7 @@ def get_artist_top_tracks(artist, country = None):
 
 	added = set()
 	for track in search:
-		name = re.sub("[(].*?[)]", '', track['name'].split(':')[0].split(' - ')[0]).strip()
-		added.add(name)
+		added.add(re.sub("[(].*?[)]", '', track['name'].split(':')[0].split(' - ')[0]).strip())
 
 	return added
 
@@ -95,20 +101,18 @@ def get_album_tracklist(album):
 
 	search = spotipyObject.album(album['id'])['tracks']['items']
 
-	added = set([i['name'] for i in search])
-
-	return added
+	return set([i['name'] for i in search])
 
 def get_song_lyrics(name, artist):
 
 	song = geniusObject.search_song(name, artist)
 
 	if song == None:
-		print('\nNo lyrics found for ' + name + '\n')
+		print('\nNo lyrics found for ' + name.capitalize(), end = '\n\n')
 		return -1
 
 	if song.lyrics.lower().find('instrumental') != -1:
-		print('\nNo lyrics found for ' + song.title + '\n')
+		print('\nNo lyrics found for ' + song.title, end = '\n\n')
 		return -1
 
 	return song.lyrics
