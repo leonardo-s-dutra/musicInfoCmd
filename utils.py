@@ -58,12 +58,15 @@ def get_artist_id(artist_name, spotipyObject):
 def get_album_id(album_name, spotipyObject):
 
 	try:
-		search = spotipyObject.search(q = 'album:' + album_name, type = 'album')['albums']['items']
+		search = spotipyObject.search(q = 'album:' + album_name, type = 'album')['albums']['items'][0]
 	
 	except IndexError:
 		return -1
 
-	return search[0]
+	except TypeError:
+		return -1
+
+	return search['id'], search['artists'][0]['name']
 
 def get_artist_albums(artist, spotipyObject):
 
@@ -85,15 +88,19 @@ def get_artist_albums(artist, spotipyObject):
 
 def get_album_tracklist(album, spotipyObject):
 
-	album_id = get_album_id(album, spotipyObject)
+	try:
+		album_id, artist = get_album_id(album, spotipyObject)
+
+	except TypeError:
+		return -1, -1
 
 	try:
 		search = spotipyObject.album(album_id)['tracks']['items']
 
-		return set([i['name'] for i in search])
+		return set([i['name'] for i in search]), artist
 
 	except AttributeError:
-		return -1
+		return -1, -1
 
 
 def get_artist_top_tracks(artist, spotipyObject, country = None):
@@ -108,11 +115,6 @@ def get_artist_top_tracks(artist, spotipyObject, country = None):
 	except AttributeError:
 		return -1
 
-def get_album_tracklist(album):
-
-	search = spotipyObject.album(album['id'])['tracks']['items']
-
-	return set([i['name'] for i in search])
 
 def get_song_lyrics(name, artist):
 
