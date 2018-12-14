@@ -83,6 +83,19 @@ def get_artist_albums(artist, spotipyObject):
 	except AttributeError:
 		return -1
 
+def get_album_tracklist(album, spotipyObject):
+
+	album_id = get_album_id(album, spotipyObject)
+
+	try:
+		search = spotipyObject.album(album_id)['tracks']['items']
+
+		return set([i['name'] for i in search])
+
+	except AttributeError:
+		return -1
+
+
 def get_artist_top_tracks(artist, spotipyObject, country = None):
 
 	artist_id = get_artist_id(artist, spotipyObject)
