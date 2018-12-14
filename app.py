@@ -4,7 +4,7 @@ import spotipy
 import spotipy.util
 import lyricsgenius
 
-import utils
+from utils import *
 
 class App(Cmd):
 
@@ -125,6 +125,7 @@ Parameters:
 													   		   redirect_uri = self.spotify['REDIRECT_URI'])
 				except:
 					print("Couldn't initiate Spotify application. Please, try again", end = '\n\n')	#if failed, log error and return
+					return
 
 			self.spotify_api = spotipy.Spotify(auth = token)										#define spotify API object
 			print('Running Spotify session', end = '\n\n')
@@ -234,37 +235,55 @@ Parameters:
 		if check_arguments_number(arg, min = 2) == -1:												#check number of arguments
 			return																					#return if not correct
 
-		if arg[0] == 'ARTIST_ALBUMS':																#if first argument is 'ARTIST_ALBUMS'
+		if arg[0] == 'ARTIST':																		#if first argument is 'ARTIST_ALBUMS'
 
 			if self.spotify_api == None:															#if spotify API not running
 				print('Spotify API session not running', end = '\n\n')								#log error and return
 				return
+			artist = ' '.join(arg[2:])																#join last arguments in case of not sigle word artist
 
-			artist = ' '.join(arg[1:])																#join last arguments in case of not sigle word artist
-			albums = get_artist_albums(artist, self.spotify_api)									#get albums
+			if arg[1] == 'ALBUMS':
+				albums = get_artist_albums(artist, self.spotify_api)								#get albums
 
-			if albums == -1:																		#if failed
-				print('Artist not found', end = '\n\n')												#log error and return
-				return
+				if albums == -1:																#if failed
+					print('Artist not found', end = '\n\n')										#log error and return
+					return
 
-			print('\n' + artist.capitalize() + ' albums:', end = '\n\n')
-			print_table(albums)
+				print('\n' + artist.capitalize() + ' albums:', end = '\n\n')						#else print table with requested content
+				print_table(albums)
 
-		elif arg[0] == 'ARTIST_TOP_TRACKS':
-			
+			elif arg[1] == 'TOP_TRACKS':
+				top_tracks = get_artist_top_tracks(artist, self.spotify_api)						#get top tracks
+
+				if top_tracks == -1:																#if failed
+					print('Artist not found', end = '\n\n')											#log error and return
+					return
+
+				print('\n' + artist.capitalize() + ' top tracks:', end = '\n\n')					#else print table with requested content
+				print_table(top_tracks)
+
+			else:
+				print('Invalid argument:', arg[1], end = '\n\n')									#if invalid first argumernt, log error and return
+
+		elif arg[0] == 'ALBUM':
+
 			if self.spotify_api == None:															#if spotify API not running
 				print('Spotify API session not running', end = '\n\n')								#log error and return
 				return
+			album = ' '.join(arg[2:])																#join last arguments in case of not sigle word artist
 
-			artist = ' '.join(arg[1:])																#join last arguments in case of not sigle word artist
-			top_tracks = get_artist_top_tracks(artist, self.spotify_api)							#get albums
+			if arg[1] == 'TRACKLIST':
+				tracklist, artist = get_album_tracklist(album, self.spotify_api)					#get tracklist and artist
 
-			if top_tracks == -1:																	#if failed
-				print('Artist not found', end = '\n\n')												#log error and return
-				return
+				if tracklist == -1:																	#if failed
+					print('Album not found', end = '\n\n')											#log error and return
+					return	
 
-			print('\n' + artist.capitalize() + ' top tracks:', end = '\n\n')
-			print_table(top_tracks)
+				print('\n' + album.capitalize(), 'by', artist.capitalize(), 'tracklist:', end = '\n\n')		#else print table with requested content
+				print_table(tracklist)
+
+			else:
+				print('Invalid argument:', arg[1], end = '\n\n')									#if invalid first argumernt, log error and return
 
 		else:
 			print('Invalid argument:', arg[1], end = '\n\n')										#if invalid first argumernt, log error and return
