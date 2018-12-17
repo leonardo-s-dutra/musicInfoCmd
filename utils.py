@@ -123,16 +123,16 @@ def get_artist_top_tracks(artist, spotipyObject, country = None):
 		return -1
 
 
-def get_song_lyrics(name, artist):
+def get_song_lyrics(name, artist, lyricsGeniusObject):
 
-	song = geniusObject.search_song(name, artist)
+	song = lyricsGeniusObject.search_song(name, artist)
 
 	if song == None:
 		print('\nNo lyrics found for ' + name.capitalize(), end = '\n\n')
 		return -1
 
-	if song.lyrics.lower().find('instrumental') != -1:
+	if song.lyrics.lower().find('[Instrumental]') != -1:
 		print('\nNo lyrics found for ' + song.title, end = '\n\n')
 		return -1
 
-	return song.lyrics
+	return song.lyrics, song.artist
