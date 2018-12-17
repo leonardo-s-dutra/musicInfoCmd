@@ -1,7 +1,8 @@
 import os
 import re
 
-def txt_to_list(file, number_of_lines):
+
+def txt_to_list(file):
 
 	if not os.path.exists(file):
 		print('Could not find file', "'"+file+"'", end = '\n\n')
@@ -12,19 +13,20 @@ def txt_to_list(file, number_of_lines):
 
 			lines = [line.replace('\n', '') for line in f.readlines()]
 
-			if len(lines) < number_of_lines:
+			if len(lines) < 5:
 				print('Missing values in file', "'"+file+"'", end = '\n\n')
 				return -1
 
-			elif len(lines) > number_of_lines:
+			elif len(lines) > 5:
 				print('Too many values in file', "'"+file+"'", end = '\n\n')
 				return -1
 
-			return lines
+			return lines[:-1], lines[-1]
 
 	except:
 		print('Could not open file', "'"+file+"'", end = '\n\n')
 		return -1
+
 
 def check_arguments_number(arg, min = 0, max = float('inf')):
 
@@ -36,6 +38,7 @@ def check_arguments_number(arg, min = 0, max = float('inf')):
 		print('Too many arguments!', end = '\n\n')
 		return -1
 
+
 def print_table(items):
 
 	max_len = max(len(item) for item in items)
@@ -44,6 +47,7 @@ def print_table(items):
 	for item in items:
 		print('\t|' + item + (max_len - len(item)) * ' ' + '|')
 	print('\t' + max_len * '*' + '**', end = '\n\n')
+
 
 def get_artist_id(artist_name, spotipyObject):
 
@@ -54,6 +58,7 @@ def get_artist_id(artist_name, spotipyObject):
 		return -1
 
 	return search['id']
+
 
 def get_album_id(album_name, spotipyObject):
 
@@ -67,6 +72,7 @@ def get_album_id(album_name, spotipyObject):
 		return -1
 
 	return search['id'], search['artists'][0]['name']
+
 
 def get_artist_albums(artist, spotipyObject):
 
@@ -86,13 +92,14 @@ def get_artist_albums(artist, spotipyObject):
 	except AttributeError:
 		return -1
 
+
 def get_album_tracklist(album, spotipyObject):
 
 	try:
 		album_id, artist = get_album_id(album, spotipyObject)
 
 	except TypeError:
-		return -1, -1
+		return -1, None
 
 	try:
 		search = spotipyObject.album(album_id)['tracks']['items']
@@ -100,7 +107,7 @@ def get_album_tracklist(album, spotipyObject):
 		return set([i['name'] for i in search]), artist
 
 	except AttributeError:
-		return -1, -1
+		return -1, None
 
 
 def get_artist_top_tracks(artist, spotipyObject, country = None):
