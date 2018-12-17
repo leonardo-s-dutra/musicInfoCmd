@@ -133,9 +133,9 @@ Parameters:
 
 	def do_CLOSE_SESSION(self, arg):
 		'''
-Use: CLOSE_SESSION <APP>
+Use: CLOSE_SESSION
 
-Dedicated to stop a running application.
+Dedicated to stop running application.
 		'''
 		arg = arg.strip().split()																		#split arg string by spaces
 		if check_arguments_number(arg, max = 0) == -1:													#check number of arguments
@@ -200,7 +200,24 @@ Parameters:
 
 
 	def do_GET(self, arg):
+'''
+Use: GET <PARAMETER1> <PATAMETER2>, <PARAMETER3> (optional)
 
+Dedicated to show general information about an artist,
+album or song.
+
+Parameters:
+
+	PARAMETER1:
+		ARTIST:
+			ALBUMS
+			TOP_TRACKS		
+		ALBUM:
+			TRACKLIST
+		SONG:
+			LYRICS
+			ARTIST
+'''
 		arg = arg.strip().split()																		#split arg string by spaces
 		if check_arguments_number(arg, min = 2) == -1:													#check number of arguments
 			return																						#return if not correct
