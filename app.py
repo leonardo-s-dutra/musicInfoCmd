@@ -67,87 +67,70 @@ Parameters:
 
 	def do_INIT_SESSION(self, arg):
 		'''
-Use: INIT_SESSION <APP> <FILE> (optional)
+Use: INIT_SESSION <FILE> (optional)
 
-Dedicated to initiate an application session. To do such, you must have all
-variables setted to a valid string value. You can do that using the SET command
+Dedicated to initiate session. To do such, you must have all variables
+setted to a valid string value. You can do that using the SET command
 or passing a file containing your personal data as a optional argument.
 
-For a Spotify application, the file must contain data in
-this order:
+For Spotify, you must contain have:
 	
 	username
 	client_id
 	client_secret
 	redirect_uri
 
-For a Lyrics Genius application, the file should contain
-only your token.
+For Lyrics Genius, only your token.
 
 Parameters:
 
-	APP:
-		SPOTIFY
-		LYRICS_GENIUS
 	FILE:
 		A .txt file path
 		'''
 		arg = arg.strip().split()																	#split arg string by spaces
-		if check_arguments_number(arg, min = 1, max = 2) == -1:										#check number of arguments
+		if check_arguments_number(arg, min = 0, max = 1) == -1:										#check number of arguments
 			return																					#return if not correct
 
-		if arg[0] == 'SPOTIFY':																		#if first argument is 'SPOTIFY'
+		if len(arg) == 1:																			#if provided two arguments:
+			result = txt_to_list(arg[0])															#get file data
+			if result == -1:
+				return 																				#if failed, log error and return
+			self.spotify = dict(zip(self.spotify.keys(), result[0]))								#else, set spotify attribute
+			self.lyrics_genius['TOKEN'] = result[1]
+			print(self.spotify)
+			print(self.lyrics_genius)
 
-			if len(arg) == 2:																		#if provided two arguments:
-				result = txt_to_list(arg[1], 4)														#get file data
-				if result == -1:
-					return 																			#if failed, log error and return
-				self.spotify = dict(zip(self.spotify.keys(), result))								#else, set spotify attribute
+		for i in self.spotify.items():																#check if there are empty spotify attributes
+			if i[1] == '':
+				print('Spotify', i[0], 'not specified', end = '\n\n') 								#in the case, log error and return
+				return
 
-			for i in self.spotify.items():															#check if there are empty attributes
-				if i[1] == '':
-					print('Spotify', i[0], 'not specified', end = '\n\n')
-					return 																			#in the case, log error and return
+		for i in self.lyrics_genius.items():														#check if there are empty lyrics genius attributes
+			if i[1] == '':
+				print('Lyrics Genius', i[0], 'not specified', end = '\n\n')							#in the case, log error and return
+				return																				
 
-			try:																					#try to get spotify token
+		try:																						#try to get spotify token
+			token = spotipy.util.prompt_for_user_token(self.spotify['USERNAME'],
+											   		   scope = None,
+											   		   client_id = self.spotify['CLIENT_ID'],
+											   		   client_secret = self.spotify['CLIENT_SECRET'],
+											   		   redirect_uri = self.spotify['REDIRECT_URI'])
+		except:
+			try:
+				os.remove(f".cache-{self.spotify['USERNAME']}")
 				token = spotipy.util.prompt_for_user_token(self.spotify['USERNAME'],
 												   		   scope = None,
 												   		   client_id = self.spotify['CLIENT_ID'],
 												   		   client_secret = self.spotify['CLIENT_SECRET'],
 												   		   redirect_uri = self.spotify['REDIRECT_URI'])
 			except:
-				try:
-					os.remove(f".cache-{self.spotify['USERNAME']}")
-					token = spotipy.util.prompt_for_user_token(self.spotify['USERNAME'],
-													   		   scope = None,
-													   		   client_id = self.spotify['CLIENT_ID'],
-													   		   client_secret = self.spotify['CLIENT_SECRET'],
-													   		   redirect_uri = self.spotify['REDIRECT_URI'])
-				except:
-					print("Couldn't initiate Spotify application. Please, try again", end = '\n\n')	#if failed, log error and return
-					return
+				print("Couldn't initiate Spotify application. Please, try again", end = '\n\n')		#if failed, log error and return
+				return
 
-			self.spotify_api = spotipy.Spotify(auth = token)										#define spotify API object
-			print('Running Spotify session', end = '\n\n')
-
-		elif arg[0] == 'LYRICS_GENIUS':																#if first argument is 'LYRICS_GENIUS'
-
-			if len(arg) == 2:																		#if provided two arguments:
-				result = txt_to_list(arg[1], 1)														#get file data
-				if result == -1:
-					return 																			#if failed, log error and return
-				self.lyrics_genius = dict(zip(self.lyrics_genius.keys(), result))					#else, set lyrics genius attributes
-
-			for i in self.lyrics_genius.items():													#check if there are empty attributes
-				if i[1] == '':
-					print('Lyrics Genius', i[0], 'not specified', end = '\n\n')
-					return 																			#in the case, log error and return
-
-			self.lyrics_genius_api = lyricsgenius.Genius(self.lyrics_genius['TOKEN'])				#define lyrics Genius API object
-			print('Running Lyrics Genius session', end = '\n\n')
-
-		else:
-			print('Invalid argument:', arg[0], end = '\n\n')										#if invalid first argumernt, log error and return
+		self.spotify_api = spotipy.Spotify(auth = token)										#define spotify API object
+		self.lyrics_genius_api = lyricsgenius.Genius(self.lyrics_genius['TOKEN'])				#define lyrics Genius API object
+		print('Running session', end = '\n\n')
 
 
 	def do_CLOSE_SESSION(self, arg):
@@ -155,33 +138,22 @@ Parameters:
 Use: CLOSE_SESSION <APP>
 
 Dedicated to stop a running application.
-
-Parameters:
-
-	APP:
-		SPOTIFY
-		LYRICS_GENIUS
 		'''
 		arg = arg.strip().split()																	#split arg string by spaces
-		if check_arguments_number(arg, min = 1, max = 1) == -1:										#check number of arguments
+		if check_arguments_number(arg, max = 0) == -1:												#check number of arguments
 			return																					#return if not correct
 
-		if arg[0] == 'SPOTIFY':																		#if first argument is 'SPOTIFY'
-			if self.spotify_api == None:															#if spotify API object not defined
-				print('No Spotify session currently running', end = '\n\n')							#log error and return
-			else:
-				self.spotify_api = None																#else set spotify API object to none
-				print('Stopped Spotify session', end = '\n\n')
-
-		elif arg[0] == 'LYRICS_GENIUS':																#if first argument is 'LYRICS_GENIUS'
-			if self.lyrics_genius_api == None:														#if lyrics genius API object is none
-				print('No Lyrics Genius session currently running', end = '\n\n')					#log error and return
-			else:
-				self.lyrics_genius_api = None 														#else set lyrics genius API object to none
-				print('Stopped Lyrics Genius session', end = '\n\n')
-
+		if self.spotify_api == None:																#if spotify API object not defined
+			print('No Spotify session currently running', end = '\n\n')								#log error and return
 		else:
-			print('Invalid argument:', arg[0], end = '\n\n')										#if invalid first argumernt, log error and return
+			self.spotify_api = None																	#else set spotify API object to none
+			print('Stopped Spotify session', end = '\n\n')
+
+		if self.lyrics_genius_api == None:															#if lyrics genius API object is none
+			print('No Lyrics Genius session currently running', end = '\n\n')						#log error and return
+		else:
+			self.lyrics_genius_api = None 															#else set lyrics genius API object to none
+			print('Stopped Lyrics Genius session', end = '\n\n')
 
 
 	def do_SPOTIFY(self, arg):
@@ -245,8 +217,8 @@ Parameters:
 			if arg[1] == 'ALBUMS':
 				albums = get_artist_albums(artist, self.spotify_api)								#get albums
 
-				if albums == -1:																#if failed
-					print('Artist not found', end = '\n\n')										#log error and return
+				if albums == -1:																	#if failed
+					print('Artist not found', end = '\n\n')											#log error and return
 					return
 
 				print('\n' + artist.capitalize() + ' albums:', end = '\n\n')						#else print table with requested content
