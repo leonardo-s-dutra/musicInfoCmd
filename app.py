@@ -200,7 +200,7 @@ Parameters:
 
 
 	def do_GET(self, arg):
-'''
+		'''
 Use: GET <PARAMETER1> <PATAMETER2>, <PARAMETER3> (optional)
 
 Dedicated to show general information about an artist,
@@ -217,7 +217,7 @@ Parameters:
 		SONG:
 			LYRICS
 			ARTIST
-'''
+		'''
 		arg = arg.strip().split()																		#split arg string by spaces
 		if check_arguments_number(arg, min = 2) == -1:													#check number of arguments
 			return																						#return if not correct
