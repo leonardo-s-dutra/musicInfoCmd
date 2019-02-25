@@ -73,7 +73,7 @@ Dedicated to initiate session. To do such, you must have all variables
 setted to a valid string value. You can do that using the SET command
 or passing a file containing your personal data as a optional argument.
 
-For Spotify, you must contain have:
+For Spotify, you must have:
 	
 	username
 	client_id
