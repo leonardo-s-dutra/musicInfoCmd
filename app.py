@@ -120,7 +120,7 @@ Use: CLOSE_SESSION
 Dedicated to stop running application.
 		'''
 		arg = arg.strip().split()																	#split arg string by spaces
-		if not check_arguments_number(arg, max = 0):												#check number of arguments
+		if check_arguments_number(arg, max = 0) == False:											#check number of arguments
 			return																					#return if not correct
 
 		if self.spotify_api == None:																#if spotify API object not defined
@@ -151,7 +151,7 @@ Parameters:
 		REDIRECT_URI
 		'''
 		arg = arg.strip().split()																	#split arg string by spaces
-		if not check_arguments_number(arg, min = 1, max = 2):										#check number of arguments
+		if check_arguments_number(arg, min = 1, max = 2) == False:									#check number of arguments
 			return																					#return if not correct
 
 		if arg[0] in list(self.spotify.keys()):														#if second argument is in spotify keys
@@ -173,7 +173,7 @@ Parameters:
 		TOKEN
 		'''
 		arg = arg.strip().split()																	#split arg string by spaces
-		if not check_arguments_number(arg, min = 1, max = 2):										#check number of arguments
+		if check_arguments_number(arg, min = 1, max = 2) == False:									#check number of arguments
 			return																					#return if not correct
 
 		if arg[0] in list(self.lyrics_genius.keys()):												#if second argument is in lyrics genius keys
@@ -203,7 +203,7 @@ Parameters:
 			ARTIST
 		'''
 		arg = arg.strip().split()																	#split arg string by spaces
-		if not check_arguments_number(arg, min = 2):												#check number of arguments
+		if check_arguments_number(arg, min = 2) == False:											#check number of arguments
 			return																					#return if not correct
 
 		if arg[0] == 'ARTIST':																		#if first argument is 'ARTIST_ALBUMS'
@@ -280,7 +280,3 @@ Parameters:
 
 		else:
 			print('Invalid argument:', arg[1], end = '\n\n')										#if invalid first argumernt, log error and return
-
-
-	def emptyline(self):
-		pass 																						#if no command was passed, do nothing
