@@ -10,20 +10,19 @@ class App(Cmd):
 
 	'''Command-line application class'''
 
-	spotify = {'USERNAME': '', 'CLIENT_ID': '', 'CLIENT_SECRET': '', 'REDIRECT_URI': ''}			#for Spotify attributes
-	spotify_api = None																				#for Spotify API object
-
-	lyrics_genius = {'TOKEN': ''}																	#for Lyrics Genius attributes
-	lyrics_genius_api = None																		#for Lyrics Genius API object
+	credentials = {'USERNAME': '', 'CLIENT_ID': '', 'CLIENT_SECRET': '',							#credentials for running
+				   'REDIRECT_URI': '', 'TOKEN': ''}													#a session
+	spotify_api = None																				#Spotify API object
+	lyrics_genius_api = None																		#Lyrics Genius API object
 
 	save_to_file = False
 
 	
 	def do_SET(self, arg):
 		'''
-Use: SET <APP> <VAR>
+Use: SET <VAR>
 
-Command dedicated to set the variables to initiate an application.
+Command dedicated to set the variables to initiate a session.
 
 Spotify provides you:
 	username (found in your personal account profile),
@@ -35,9 +34,6 @@ While Lyrics Genius provides you a token for it.
 
 Parameters:
 
-	APP:
-		SPOTIFY
-		LYRICS_GENIUS
 	VAR:
 		USERNAME (for Spotify)
 		CLIENT_ID (for Spotify)
@@ -46,33 +42,21 @@ Parameters:
 		TOKEN (for Lyrics Genius)
 		'''
 		arg = arg.strip().split()																	#split arg string by spaces
-		if check_arguments_number(arg, min = 3, max = 3) == -1:										#check number of arguments
+		if check_arguments_number(arg, min = 2, max = 2) == False:									#check number of arguments
 			return																					#return if not correct
 
-		if arg[0] == 'SPOTIFY':																		#if first argument is 'SPOTIFY'
-			if arg[1] in list(self.spotify.keys()):													#if second argument is in spotify keys
-				self.spotify[arg[1]] = arg[2]														#set spotify attribute
-				print('Spotify', arg[1].capitalize().replace('_', ' '), '=',\
-				"'"+self.spotify[arg[1]]+"'", end = '\n\n')											#show attributes
-			else:
-				print('Invalid argument:', arg[1], end = '\n\n')									#else log error and return
-
-		elif arg[0] == 'LYRICS_GENIUS':																#else if first argument is 'LYRICS_GENIUS'
-			if arg[1] == 'TOKEN':																	#if seconf argument is 'Token'
-				self.lyrics_genius['TOKEN'] = arg[2]												#set lyrics_genius attribute
-				print('Lyrics Genius Token =', "'"+self.lyrics_genius['TOKEN']+"'", end = '\n\n')
-			else:
-				print('Invalid argument:', arg[1], end = '\n\n')									#else log error and return
-
+		if arg[0] in list(self.credentials.keys()):													#if first argument is a credential
+			self.credentials[arg[0]] = arg[1]														#set credential
+			print(arg[0].capitalize(), '=', "'"+arg[1]+"'", end = '\n\n')							#show its setted value
 		else:
-			print('Invalid argument:', arg[0], end = '\n\n')										#if invalid first argumernt, log error and return
+			print('Invalid argument:', arg[0], end = '\n\n')										#else log error and return
 
 
 	def do_INIT_SESSION(self, arg):
 		'''
 Use: INIT_SESSION <FILE> (optional)
 
-Dedicated to initiate session. To do such, you must have all variables
+Dedicated to initiate session. To do such, you must have all credentials
 setted to a valid string value. You can do that using the SET command
 or passing a file containing your personal data as a optional argument.
 
@@ -87,50 +71,45 @@ For Lyrics Genius, only your token.
 
 Parameters:
 
-	FILE:
+	FILE (optional):
 		A .txt file path
 		'''
 		arg = arg.strip().split()																	#split arg string by spaces
-		if not  check_arguments_number(arg, min = 0, max = 1):										#check number of arguments
+		if check_arguments_number(arg, min = 0, max = 1) == False:									#check number of arguments
 			return																					#return if not correct
 
 		if len(arg) == 1:																			#if provided two arguments:
 			result = txt_to_list(arg[0])															#get file data
-			if result == -1:
-				return 																				#if failed, log error and return
-			self.spotify = dict(zip(self.spotify.keys(), result[0]))								#else, set spotify attributes
-			self.lyrics_genius['TOKEN'] = result[1]													#and lyrics genius attribute
+			if result == False:
+				return																				#if failed, log error and return
 
-		for i in self.spotify.items():																#check if there are empty spotify attributes
-			if i[1] == '':
-				print('Spotify', i[0], 'not specified', end = '\n\n') 								#in the case, log error and return
-				return
+			self.credentials = dict(zip(self.credentials.keys(), result))							#else, set credentials from file
 
-		for i in self.lyrics_genius.items():														#check if there are empty lyrics genius attributes
+		for i in self.credentials.items():															#check if there are any empty credential
 			if i[1] == '':
-				print('Lyrics Genius', i[0], 'not specified', end = '\n\n')							#in the case, log error and return
-				return																				
+				print(i[0], 'not specified', end = '\n\n')			 								#in the case, log error and return
+				return																		
 
 		try:																						#try to get spotify token
-			token = spotipy.util.prompt_for_user_token(self.spotify['USERNAME'],
+			token = spotipy.util.prompt_for_user_token(self.credentials['USERNAME'],
 											   		   scope = None,
-											   		   client_id = self.spotify['CLIENT_ID'],
-											   		   client_secret = self.spotify['CLIENT_SECRET'],
-											   		   redirect_uri = self.spotify['REDIRECT_URI'])
+											   		   client_id = self.credentials['CLIENT_ID'],
+											   		   client_secret = self.credentials['CLIENT_SECRET'],
+											   		   redirect_uri = self.credentials['REDIRECT_URI'])
 		except:
 			try:
-				os.remove(f".cache-{self.spotify['USERNAME']}")
-				token = spotipy.util.prompt_for_user_token(self.spotify['USERNAME'],
+				os.remove(f".cache-{self.credentials['USERNAME']}")
+				token = spotipy.util.prompt_for_user_token(self.credentials['USERNAME'],
 												   		   scope = None,
-												   		   client_id = self.spotify['CLIENT_ID'],
-												   		   client_secret = self.spotify['CLIENT_SECRET'],
-												   		   redirect_uri = self.spotify['REDIRECT_URI'])
+												   		   client_id = self.credentials['CLIENT_ID'],
+												   		   client_secret = self.credentials['CLIENT_SECRET'],
+												   		   redirect_uri = self.credentials['REDIRECT_URI'])
 			except:
 				print("Couldn't initiate Spotify application. Please, try again", end = '\n\n')		#if failed, log error and return
 				return
 
 		self.spotify_api = spotipy.Spotify(auth = token)											#define spotify API object
-		self.lyrics_genius_api = lyricsgenius.Genius(self.lyrics_genius['TOKEN'])					#define lyrics Genius API object
+		self.lyrics_genius_api = lyricsgenius.Genius(self.credentials['TOKEN'])						#define lyrics Genius API object
 		print('Running session', end = '\n\n')
 
 
@@ -304,4 +283,4 @@ Parameters:
 
 
 	def emptyline(self):
-		pass 																							#if no command was passed, do nothing
+		pass 																						#if no command was passed, do nothing
