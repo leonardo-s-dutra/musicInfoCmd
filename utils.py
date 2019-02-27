@@ -15,13 +15,13 @@ def txt_to_list(file):
 
 			if len(lines) < 5:
 				print('Missing values in file', "'"+file+"'", end = '\n\n')
-				return -1
+				return False
 
 			elif len(lines) > 5:
 				print('Too many values in file', "'"+file+"'", end = '\n\n')
-				return -1
+				return False
 
-			return lines[:-1], lines[-1]
+			return lines
 
 	except:
 		print('Could not open file', "'"+file+"'", end = '\n\n')
