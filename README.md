@@ -1,4 +1,4 @@
-# musicInfoCmd
+# MusicInfoCmd
 
 A Python application for music information gathering via command-line based on Spotify and Lyrics Genius API's.
 
@@ -28,7 +28,7 @@ You can also use the CLOSE_SESSION command to change variables or something like
 
 ## Usage
 
-With this app, you can get information from spotify with commands like GET, which gives you parameters such:
+With this app, you can get information from spotify with the command GET, which gives you parameters such:
 
 * ARTIST
      * ALBUMS
