@@ -4,7 +4,7 @@ import spotipy
 import spotipy.util
 import lyricsgenius
 
-from utils import *
+from music_info_utils import *
 
 class App(Cmd):
 
