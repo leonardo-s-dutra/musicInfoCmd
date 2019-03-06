@@ -12,19 +12,15 @@ For lyrics genius, you need to generate a token at https://docs.genius.com/#/get
 
 ## Getting access
 
-Before running any command, you need to run INIT_SESSION, which will check for your credentials. You should set them using the SET command followed by the credential and its value or run INIT_SESSION giving a file containing the credentials as a optional argument.
+When you run musicinfo.py, you need to provide a -f argument which is a text file containing your credentials. The file must contain:
 
-The file should look like this:
+username
+client_id
+client_secret
+redirect_uri
+token
 
-username  
-client ID  
-client secret  
-redirect URL  
-Token  
-
-In this exact order.  
-
-You can also use the CLOSE_SESSION command to change variables or something like that.
+In this exact order.
 
 ## Usage
 
@@ -38,8 +34,16 @@ With this app, you can get information from spotify with the command GET, which 
      * TRACKLIST
 * SONG
      * LYRICS
-     * ARTIST
-  
+
+You can also get your credential with the commands:
+
+* SPOTIFY
+    * USERNAME
+    * ID
+    * SECRET
+    * URI
+* LYRICS_GENIUS
+    * TOKEN
 Getting lyrics is the only resource used from Lyrics Genius API.  
   
 If you have any doupt, check the help command or contact me ;)
