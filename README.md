@@ -44,6 +44,7 @@ You can also get your credential with the commands:
     * URI
 * LYRICS_GENIUS
     * TOKEN
+
 Getting lyrics is the only resource used from Lyrics Genius API.  
   
 If you have any doupt, check the help command or contact me ;)
