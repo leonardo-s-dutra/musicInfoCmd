@@ -1,4 +1,4 @@
-# MusicInfoCmd
+# MusicInfoEnvironment
 
 A Python application for music information gathering via command-line based on Spotify and Lyrics Genius API's.
 
