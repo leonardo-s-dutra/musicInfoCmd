@@ -29,7 +29,6 @@ With this app, you can get information from spotify with the command GET, which 
 * ARTIST
      * ALBUMS
      * TOP_TRACKS
-
 * ALBUM
      * TRACKLIST
 * SONG
