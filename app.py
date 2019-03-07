@@ -171,7 +171,7 @@ Parameters:
 
 		elif arg[0] == 'SONG':
 
-			if self.lyrics_genius_api == None:													#if spotify API not running
+			if self.genius_api == None:															#if spotify API not running
 				print('Lyrics Genius API session not running'+'\n')								#log error and return
 				return
 			
@@ -183,7 +183,7 @@ Parameters:
 				song, artist = ' '.join(arg[2:]), ''											#else set empty artist
 
 			if arg[1] == 'LYRICS':
-				song_lyrics, artist = get_song_lyrics(song, artist, self.lyrics_genius_api)		#get tracklist and artist
+				song_lyrics, artist = get_song_lyrics(song, artist, self.genius_api)			#get tracklist and artist
 				if song_lyrics == -1:															#if failed
 					return																		#return	
 				print('\n'+song.capitalize(), 'by', artist.capitalize(), 'lyrics:'+'\n')		#else print table with requested content
