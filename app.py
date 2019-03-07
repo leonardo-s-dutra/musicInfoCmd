@@ -53,51 +53,6 @@ class App(Cmd):
 
 			self.spotify_api = spotipy.Spotify(auth = token)										#define spotify API object
 			self.genius_api = lyricsgenius.Genius(self.credentials['TOKEN'])						#define lyrics Genius API object
-		
-	def do_SPOTIFY(self, arg):
-		'''
-Use: SPOTIFY <VAR>
-
-Shows Spotify app variable.
-
-Parameters:
-	
-	VAR:
-		USERNAME
-		ID
-		SECRET
-		URI
-		'''
-		arg = arg.strip().split()																	#split arg string by spaces
-		if check_arguments_number(arg, min=1, max=2) == False:										#check number of arguments
-			return																					#return if not correct
-
-		if arg[0] in list(self.spotify.keys()):														#if second argument is in spotify keys
-			print('Spotify', arg[0].capitalize().replace('_', ' '), '=', \
-			"'"+self.spotify[arg[0]]+"'"+'\n')														#shows attribute
-		else:
-			print('Invalid argument:', arg[1]+'\n')													#if invalid first argumernt, log error and return
-
-
-	def do_LYRICS_GENIUS(self, arg):
-		'''
-Use: LYRICS_GENIUS <VAR>
-
-Shows Lyrics Genius app variable.
-
-Parameters:
-	
-	VAR:
-		TOKEN
-		'''
-		arg = arg.strip().split()																	#split arg string by spaces
-		if check_arguments_number(arg, min=1, max=2) == False:										#check number of arguments
-			return																					#return if not correct
-
-		if arg[0] == 'TOKEN':																		#if second argument is in lyrics genius keys
-			print('Lyrics Genius token', '=', "'"+self.credentials['TOKEN']+"'"+'\n')				#shows attribute
-		else:
-			print('Invalid argument:', arg[1]+'\n')													#if invalid first argumernt, log error and return
 
 
 	def do_GET(self, arg):
