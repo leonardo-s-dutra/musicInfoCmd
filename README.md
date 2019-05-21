@@ -34,15 +34,7 @@ With this app, you can get information from spotify with the command GET, which 
 * SONG
      * LYRICS
 
-You can also get your credential with the commands:
-
-* SPOTIFY
-    * USERNAME
-    * ID
-    * SECRET
-    * URI
-* LYRICS_GENIUS
-    * TOKEN
+You can also get your credential with the commands:  
 
 Getting lyrics is the only resource used from Lyrics Genius API.  
   
