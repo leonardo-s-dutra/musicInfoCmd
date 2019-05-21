@@ -14,11 +14,11 @@ For lyrics genius, you need to generate a token at https://docs.genius.com/#/get
 
 When you run musicinfo.py, you need to provide a -f argument which is a text file containing your credentials. The file must contain:
 
-username
-client_id
-client_secret
-redirect_uri
-token
+username  
+client_id  
+client_secret  
+redirect_uri  
+token  
 
 In this exact order.
 
