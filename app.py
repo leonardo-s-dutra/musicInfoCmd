@@ -110,7 +110,7 @@ Parameters:
 				print('Spotify API session not running'+'\n')									#log error and return
 				return
 			
-			album = ' '.join(arg[2:])															#join last arguments in case of not sigle word artist
+			album = ' '.join(arg[1:])															#join last arguments in case of not sigle word artist
 			tracklist, artist = get_album_tracklist(album, self.spotify_api)					#get tracklist and artist
 
 			if tracklist == -1:																	#if failed
