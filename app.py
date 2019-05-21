@@ -102,27 +102,23 @@ Parameters:
 				print_table(top_tracks)
 
 			else:
-				print('Invalid argument:', arg[1]+'\n')										#if invalid first argumernt, log error and return
+				print('Invalid argument:', arg[1]+'\n')											#if invalid first argumernt, log error and return
 
-		elif arg[0] == 'ALBUM':
+		elif arg[0] == 'TRACKLIST':
 
 			if self.spotify_api == None:														#if spotify API not running
 				print('Spotify API session not running'+'\n')									#log error and return
 				return
 			
 			album = ' '.join(arg[2:])															#join last arguments in case of not sigle word artist
-			if arg[1] == 'TRACKLIST':
-				tracklist, artist = get_album_tracklist(album, self.spotify_api)				#get tracklist and artist
+			tracklist, artist = get_album_tracklist(album, self.spotify_api)					#get tracklist and artist
 
-				if tracklist == -1:																#if failed
-					print('Album not found'+'\n')												#log error and return
-					return	
-				print('\n'+album.capitalize(), 'by', \
-					  artist.capitalize(), 'tracklist:'+'\n')									#else print table with requested content
-				print_table(tracklist)
-
-			else:
-				print('Invalid argument:', arg[1]+'\n')											#if invalid first argumernt, log error and return
+			if tracklist == -1:																	#if failed
+				print('Album not found'+'\n')													#log error and return
+				return	
+			print('\n'+album.capitalize(), 'by', \
+				  artist.capitalize(), 'tracklist:'+'\n')										#else print table with requested content
+			print_table(tracklist)
 
 		elif arg[0] == 'SONG':
 
