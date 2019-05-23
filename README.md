@@ -6,7 +6,7 @@ A Python application for music information gathering via command-line based on S
 
 This app uses spotify and Lyrics Genius API's to provide information.
 
-To get access, you need to provide credentials made by creating a spotify app at https://developer.spotify.com/.
+To get access, you need to provide credentials made by creating a spotify app at https://developer.spotify.com/dashboard/.
 
 For lyrics genius, you need to generate a token at https://docs.genius.com/#/getting-started-h1
 
