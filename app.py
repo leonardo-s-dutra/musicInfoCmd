@@ -68,10 +68,8 @@ Parameters:
 		ARTIST:
 			ALBUMS
 			TOP_TRACKS		
-		ALBUM:
-			TRACKLIST
-		SONG:
-			LYRICS
+		TRACKLIST
+		LYRICS
 		'''
 		if check_arguments_number(arg, min=3) == -1:
 			return
@@ -138,6 +136,8 @@ Parameters:
 				print('Lyrics Genius API session not running'+'\n')								#log error and return
 				return
 			
+			arg = arg.strip().split(' ', 1)														#split arg string by spaces once
+
 			if len(' '.join(arg[2:]).split(',')) == 2:											#if composted argument
 				song, artist = ' '.join(arg[2:]).split(',')										#separate in song and artist
 				song, artist = song.strip().capitalize(), artist.strip().capitalize()
@@ -145,12 +145,12 @@ Parameters:
 			else:
 				song, artist = ' '.join(arg[2:]), ''											#else set empty artist
 
-			if arg[1] == 'LYRICS':
-				song_lyrics, artist = get_song_lyrics(song, artist, self.genius_api)			#get tracklist and artist
-				if song_lyrics == -1:															#if failed
-					return																		#return	
-				print('\n'+song.capitalize(), 'by', artist.capitalize(), 'lyrics:'+'\n')		#else print table with requested content
-				print_table(song_lyrics.split('\n'))
+			song_lyrics, artist = get_song_lyrics(song, artist, self.genius_api)				#get tracklist and artist
+			if song_lyrics == -1:																#if failed
+				return																			#return
+
+			print('\n'+song.capitalize(), 'by', artist.capitalize(), 'lyrics:'+'\n')			#else print table with requested content
+			print_table(song_lyrics.split('\n'))
 
 		else:
-			print('Invalid argument:', arg[1]+'\n')												#if invalid first argumernt, log error and return
+			print('Invalid argument:', first+'\n')												#if invalid first argumernt, log error and return
