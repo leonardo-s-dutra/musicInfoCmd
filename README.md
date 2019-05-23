@@ -30,8 +30,7 @@ With this app, you can get information from spotify with the command GET, which 
      * ALBUMS
      * TOP_TRACKS
 * TRACKLIST
-* SONG
-     * LYRICS
+* LYRICS
 
 Getting lyrics is the only resource used from Lyrics Genius API.  
   
