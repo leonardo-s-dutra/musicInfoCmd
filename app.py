@@ -73,51 +73,60 @@ Parameters:
 		SONG:
 			LYRICS
 		'''
-		arg = arg.strip().split()																#split arg string by spaces
 		if check_arguments_number(arg, min=2) == False:											#check number of arguments
 			return																				#return if not correct
 
-		if arg[0] == 'ARTIST':																	#if first argument is 'ARTIST_ALBUMS'
+		first = arg.split(' ')[0]
+
+		if first == 'ARTIST':																	#if first argument is 'ARTIST_ALBUMS'
+
+			arg = arg.strip().split(' ', 2)														#split arg string by spaces twice
 
 			if self.spotify_api == None:														#if spotify API not running
 				print('Spotify API session not running'+'\n')									#log error and return
 				return
 
-			artist = ' '.join(arg[2:])															#join last arguments in case of not sigle word artist
+			artist = arg[-1]																	#after two arguments, artist must be provided
 
 			if arg[1] == 'ALBUMS':
+				
 				albums = get_artist_albums(artist, self.spotify_api)							#get albums
 				if albums == -1:																#if failed
 					print('Artist not found'+'\n')												#log error and return
 					return
+				
 				print('\n'+artist.capitalize() + ' albums:'+'\n')								#else print table with requested content
 				print_table(albums)
 
 			elif arg[1] == 'TOP_TRACKS':
+				
 				top_tracks = get_artist_top_tracks(artist, self.spotify_api)					#get top tracks
 				if top_tracks == -1:															#if failed
 					print('Artist not found'+'\n')												#log error and return
 					return
+				
 				print('\n'+artist.capitalize() + ' top tracks:'+'\n')							#else print table with requested content
 				print_table(top_tracks)
 
 			else:
 				print('Invalid argument:', arg[1]+'\n')											#if invalid first argumernt, log error and return
 
-		elif arg[0] == 'TRACKLIST':
+		elif first == 'TRACKLIST':
+
+			arg = arg.strip().split(' ', 1)														#split arg string by spaces once
 
 			if self.spotify_api == None:														#if spotify API not running
 				print('Spotify API session not running'+'\n')									#log error and return
 				return
 			
-			album = ' '.join(arg[1:])															#join last arguments in case of not sigle word artist
+			album = arg[-1]																		#after first argument, album must be provided
 			tracklist, artist = get_album_tracklist(album, self.spotify_api)					#get tracklist and artist
 
 			if tracklist == -1:																	#if failed
 				print('Album not found'+'\n')													#log error and return
 				return	
-			print('\n'+album.capitalize(), 'by', \
-				  artist.capitalize(), 'tracklist:'+'\n')										#else print table with requested content
+			
+			print('\n'+album.capitalize(), 'by', artist.capitalize(), 'tracklist:'+'\n')		#else print table with requested content
 			print_table(tracklist)
 
 		elif arg[0] == 'SONG':
