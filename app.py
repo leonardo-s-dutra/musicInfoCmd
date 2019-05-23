@@ -143,7 +143,7 @@ Parameters:
 			if song_lyrics == -1:																#if failed
 				return																			#return
 
-			print('\n'+song.capitalize(), 'by', artist.capitalize(), 'lyrics:'+'\n')			#else print table with requested content
+			print('\n'+song.capitalize(), 'by', artist.capitalize()+':\n')			#else print table with requested content
 			print_table(song_lyrics.split('\n'))
 
 		else:
