@@ -73,14 +73,17 @@ Parameters:
 		SONG:
 			LYRICS
 		'''
-		if check_arguments_number(arg, min=2) == False:											#check number of arguments
-			return																				#return if not correct
-
+		if check_arguments_number(arg, min=3) == -1:
+			return
+		
 		first = arg.split(' ')[0]
 
-		if first == 'ARTIST':																	#if first argument is 'ARTIST_ALBUMS'
+		if first == 'ARTIST':
 
 			arg = arg.strip().split(' ', 2)														#split arg string by spaces twice
+
+			if check_arguments_number(arg, min=3) == -1:											#check number of arguments
+				return																				#return if not correct
 
 			if self.spotify_api == None:														#if spotify API not running
 				print('Spotify API session not running'+'\n')									#log error and return
@@ -89,7 +92,7 @@ Parameters:
 			artist = arg[-1]																	#after two arguments, artist must be provided
 
 			if arg[1] == 'ALBUMS':
-				
+
 				albums = get_artist_albums(artist, self.spotify_api)							#get albums
 				if albums == -1:																#if failed
 					print('Artist not found'+'\n')												#log error and return
@@ -118,20 +121,20 @@ Parameters:
 			if self.spotify_api == None:														#if spotify API not running
 				print('Spotify API session not running'+'\n')									#log error and return
 				return
-			
+
 			album = arg[-1]																		#after first argument, album must be provided
 			tracklist, artist = get_album_tracklist(album, self.spotify_api)					#get tracklist and artist
 
 			if tracklist == -1:																	#if failed
 				print('Album not found'+'\n')													#log error and return
 				return	
-			
+
 			print('\n'+album.capitalize(), 'by', artist.capitalize(), 'tracklist:'+'\n')		#else print table with requested content
 			print_table(tracklist)
 
-		elif arg[0] == 'SONG':
+		elif first == 'LYRICS':
 
-			if self.genius_api == None:															#if spotify API not running
+			if self.genius_api == None:															#if Genius API not running
 				print('Lyrics Genius API session not running'+'\n')								#log error and return
 				return
 			
